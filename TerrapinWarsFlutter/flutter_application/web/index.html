@@ -42,19 +42,41 @@
   <script src="flutter.js" defer></script>
 </head>
 <body>
+  <div id="map" style="width: 100%; height: 700px;"></div>
+
   <script>
+      // Function to initialize the map with the default location
+      function initializeMap() {
+      // Set the default coordinates (latitude and longitude)
+      var defaultLocation = { lat: 38.9869, lng: -76.9426 }; // Example: New York City coordinates
+
+      // Create a new map instance
+      var map = new google.maps.Map(document.getElementById("map"), {
+        center: defaultLocation, // Set the map center to the default location
+        zoom: 15.5 // Set the initial zoom level
+      });
+
+      // Create a marker for the default location
+      var marker = new google.maps.Marker({
+        position: defaultLocation,
+        map: map,
+        title: "Default Location" // Optional: Marker title
+      });
+    }
     window.addEventListener('load', function(ev) {
       // Download main.dart.js
-      _flutter.loader.loadEntrypoint({
-        serviceWorker: {
-          serviceWorkerVersion: serviceWorkerVersion,
-        },
-        onEntrypointLoaded: function(engineInitializer) {
-          engineInitializer.initializeEngine().then(function(appRunner) {
-            appRunner.runApp();
-          });
-        }
-      });
+      initializeMap();
+
+      // _flutter.loader.loadEntrypoint({
+      //   serviceWorker: {
+      //     serviceWorkerVersion: serviceWorkerVersion,
+      //   },
+      //   onEntrypointLoaded: function(engineInitializer) {
+      //     engineInitializer.initializeEngine().then(function(appRunner) {
+      //       appRunner.runApp();
+      //     });
+        // }
+      // });
     });
   </script>
 </body>
