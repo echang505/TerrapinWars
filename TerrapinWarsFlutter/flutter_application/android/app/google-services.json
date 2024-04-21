@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "29479499308",
+    "project_id": "algebraic-argon-420916",
+    "storage_bucket": "algebraic-argon-420916.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:29479499308:android:7ae3eeb7af86ee4ca58389",
+        "android_client_info": {
+          "package_name": "com.example.flutter_application"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBW4fGwDtcPGVuW3h7Bjp6WtNw89xQ5VVo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

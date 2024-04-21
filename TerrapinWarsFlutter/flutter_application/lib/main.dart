@@ -1,18 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application/firebase_options.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:location/location.dart';
+import 'package:firebase_database/firebase_database.dart';
 
-
-void main() => runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+ await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );  runApp(const MyApp());
+}
 
 class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
 
   @override
   _MyAppState createState() => _MyAppState();
+  
 }
 
 class _MyAppState extends State<MyApp> {
@@ -23,11 +30,15 @@ class _MyAppState extends State<MyApp> {
 
   Set<Marker> _markers = {}; // Set to hold markers
 
+  FirebaseDatabase database = FirebaseDatabase.instance;
+  DatabaseReference _databaseReference = FirebaseDatabase.instance.ref(); 
+  
   @override
   void initState() {
     super.initState();
     // Request location permission
     _requestPermission();
+     // ignore: deprecated_member_use
   }
 
   Future<void> _requestPermission() async {
@@ -47,6 +58,8 @@ class _MyAppState extends State<MyApp> {
       // Get current location
       LocationData? locationData = await location.getLocation();
       if (locationData != null) {
+        _logLocationToDatabase(_databaseReference, locationData.latitude!, locationData.longitude!);
+
         // Update map camera position
         mapController.animateCamera(CameraUpdate.newLatLngZoom(
           LatLng(locationData.latitude!, locationData.longitude!),
@@ -67,6 +80,8 @@ class _MyAppState extends State<MyApp> {
     } catch (e) {
       print('Error getting location: $e');
     }
+
+
   }
 
   void _onMapCreated(GoogleMapController controller) {
@@ -98,4 +113,16 @@ class _MyAppState extends State<MyApp> {
       ),
     );
   }
+}
+
+
+void _logLocationToDatabase(DatabaseReference _databaseReference, double latitude, double longitude) {
+  // Get a reference to the "locations" node in the database
+  DatabaseReference locationsRef = _databaseReference.child('locations');
+
+  // Push a new location entry to the database
+  locationsRef.push().set({
+    'latitude': latitude,
+    'longitude': longitude,
+  });
 }
