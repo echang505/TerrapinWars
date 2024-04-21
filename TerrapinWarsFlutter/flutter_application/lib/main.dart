@@ -292,21 +292,16 @@ class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController _passwordController = TextEditingController();
 
   Future<void> _register() async {
-    // Implement your registration logic here
-    // For example, you can use FirebaseAuth to register a new user
-    // This is just a placeholder function
-    // Replace it with your actual registration logic
     final String email = _emailController.text.trim();
     final String password = _passwordController.text.trim();
 
-    // Add your registration logic here
     try {
       UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
+
     // User registered successfully
-    // You can access the user information from userCredential.user
       print('User registered: ${userCredential.user?.uid}');
       Navigator.pushNamed(context, '/registrationSuccess');
 
@@ -371,6 +366,38 @@ class _MapPageState extends State<MapPage> {
   late GoogleMapController mapController;
   final LatLng _center = const LatLng(38.9869, -76.9426);
 
+  Future<void> _capturePoint_mckeldin() async {
+      // get current time
+      int timestamp = DateTime.now().millisecondsSinceEpoch;
+      String pointQueryString = 'points/mckeldin';
+      // DatabaseReference markersRef = _databaseReference.child('points');
+      try {
+        final ref = FirebaseDatabase.instance.ref();
+        final snapshot = await ref.child(pointQueryString).get();
+        
+        if (snapshot.exists) {
+          // Access the data from the snapshot
+          print(snapshot.value);
+        } else {
+          print("No Data Available");
+        };
+      } catch (e) {
+        print('Error fetching data: $e');
+      }
+
+      // fetch data for current holder of point
+
+      // fetch time captured
+      // go to current holder of point and add points to totalPoints
+      // go to current holder of point and remove current point from pointsHeld
+      // update point with new holder (email)
+      // update point with new time
+      // update new user as point holder
+
+
+
+  }
+
   Location location = Location(); // Initialize location
 
   final Set<Marker> _markers = {
@@ -378,6 +405,9 @@ class _MapPageState extends State<MapPage> {
         markerId: MarkerId('mckeldin'),
         position: LatLng(38.985946, -76.944600),
         icon: BitmapDescriptor.defaultMarker,
+        // onTap: (MarkerId markerId) {
+        //   _capturePoint(markerId.value());
+        // },
       ),
       const Marker(
         markerId: MarkerId('esj'),
