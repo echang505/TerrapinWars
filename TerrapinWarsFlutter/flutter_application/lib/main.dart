@@ -28,7 +28,23 @@ class _MyAppState extends State<MyApp> {
 
   Location location = Location(); // Initialize location
 
-  Set<Marker> _markers = {}; // Set to hold markers
+  final Set<Marker> _markers = {
+    const Marker(
+        markerId: MarkerId('mckeldin'),
+        position: LatLng(38.985946, -76.944600),
+        icon: BitmapDescriptor.defaultMarker,
+      ),
+      const Marker(
+        markerId: MarkerId('esj'),
+        position: LatLng(38.987083, -76.941891),
+        icon: BitmapDescriptor.defaultMarker,
+      ),
+      const Marker(
+        markerId: MarkerId('eppley'),
+        position: LatLng(38.993310, -76.945089),
+        icon: BitmapDescriptor.defaultMarker,
+      )
+  }; // Set to hold markers
 
   FirebaseDatabase database = FirebaseDatabase.instance;
   DatabaseReference _databaseReference = FirebaseDatabase.instance.ref(); 
@@ -49,11 +65,11 @@ class _MyAppState extends State<MyApp> {
       print('Location permission denied');
     } else if (status == PermissionStatus.granted) {
       // Permission granted, get current location
-      _updateLocation();
+      _updateInitLocation();
     }
   }
 
-  Future<void> _updateLocation() async {
+  Future<void> _updateInitLocation() async {
     try {
       // Get current location
       LocationData? locationData = await location.getLocation();
@@ -67,7 +83,7 @@ class _MyAppState extends State<MyApp> {
         ));
         // Add a dot marker at current location
         setState(() {
-          _markers.clear(); // Clear existing markers
+          // _markers.clear(); // Clear existing markers
           _markers.add(
             Marker(
               markerId: const MarkerId('currentLocation'),
