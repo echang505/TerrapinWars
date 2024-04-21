@@ -28,11 +28,19 @@ class MyApp extends StatelessWidget {
         '/': (context) => const LoginPage(),
         '/map': (context) => const MapPage(),
         '/register': (context) => const RegisterPage(),
-
+        '/registrationWeakPasswordPage': (context) => const RegistrationWeakPasswordPage(),
+        '/registrationUserExists': (context) => const RegistrationUserExists(),
+        '/registrationUnknownError': (context) => const RegistrationUnknownError(),
+        '/registrationBadFormat': (context) => const RegistrationBadFormat(),
+        '/registrationSuccess': (context) => const RegistrationSuccess(),
+        
       },
     );
   }
 }
+
+// stores email key for each log in -> used for queries. 
+String emailKey = "";
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -59,6 +67,7 @@ class _LoginPageState extends State<LoginPage> {
       
       if (userCredential.user != null) {
         // Navigate to the map page if login is successful
+        emailKey = _emailController.text.trim();
         Navigator.pushReplacementNamed(context, '/map');
       }
     } catch (e) {
@@ -109,7 +118,168 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 }
+class RegistrationWeakPasswordPage extends StatefulWidget {
+  const RegistrationWeakPasswordPage({Key? key}) : super(key: key);
 
+  @override
+  _RegistrationWeakPasswordPageState createState() => _RegistrationWeakPasswordPageState();
+}
+
+class _RegistrationWeakPasswordPageState extends State<RegistrationWeakPasswordPage> {
+  void _register() {
+    Navigator.pushNamed(context, '/register');
+  }
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Your Password is TOO WEAK. Enter a password with 8 characters'),
+        ),
+        body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton(
+              onPressed: _register,
+              child: const Text('Register'),
+            ),
+          ],
+        ),
+      ),
+      );
+  }
+}
+
+class RegistrationBadFormat extends StatefulWidget {
+  const RegistrationBadFormat({Key? key}) : super(key: key);
+
+  @override
+  _RegistrationBadFormatState createState() => _RegistrationBadFormatState();
+}
+
+class _RegistrationBadFormatState extends State<RegistrationBadFormat> {
+  void _register() {
+    Navigator.pushNamed(context, '/register');
+  }
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Email is badly formatted. Please Try again.'),
+        ),
+        body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton(
+              onPressed: _register,
+              child: const Text('Register'),
+            ),
+          ],
+        ),
+      ),
+      );
+  }
+}
+
+class RegistrationUserExists extends StatefulWidget {
+  const RegistrationUserExists({Key? key}) : super(key: key);
+
+  @override
+  _RegistrationUserExistsState createState() => _RegistrationUserExistsState();
+}
+
+class _RegistrationUserExistsState extends State<RegistrationUserExists> {
+  void _register() {
+    Navigator.pushNamed(context, '/register');
+  }
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('The email you entered is already in use. Please try again'),
+        ),
+        body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton(
+              onPressed: _register,
+              child: const Text('Register'),
+            ),
+          ],
+        ),
+      ),
+      );
+  }
+}
+class RegistrationUnknownError extends StatefulWidget {
+  const RegistrationUnknownError({Key? key}) : super(key: key);
+
+  @override
+  _RegistrationUnknownErrorState createState() => _RegistrationUnknownErrorState();
+}
+
+class _RegistrationUnknownErrorState extends State<RegistrationUnknownError> {
+  void _register() {
+    Navigator.pushNamed(context, '/register');
+  }
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Unknown registration error. Please try again.'),
+        ),
+        body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton(
+              onPressed: _register,
+              child: const Text('Register'),
+            ),
+          ],
+        ),
+      ),
+      );
+  }
+}
+class RegistrationSuccess extends StatefulWidget {
+  const RegistrationSuccess({Key? key}) : super(key: key);
+
+  @override
+  _RegistrationSuccessState createState() => _RegistrationSuccessState();
+}
+
+class _RegistrationSuccessState extends State<RegistrationSuccess> {
+  void _returnToLogin() {
+    Navigator.pushNamed(context, '/');
+  }
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Successfully Registered New User'),
+        ),
+        body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton(
+              onPressed: _returnToLogin,
+              child: const Text('Log In'),
+            ),
+          ],
+        ),
+      ),
+      );
+  }
+}
 class RegisterPage extends StatefulWidget {
   const RegisterPage({Key? key}) : super(key: key);
 
@@ -138,10 +308,23 @@ class _RegisterPageState extends State<RegisterPage> {
     // User registered successfully
     // You can access the user information from userCredential.user
       print('User registered: ${userCredential.user?.uid}');
-    } catch (e) {
-      print('Error registering user: $e');
-    // Handle registration failure
-  }
+      Navigator.pushNamed(context, '/registrationSuccess');
+
+    } on FirebaseAuthException catch (e) {
+        if (e.code == 'weak-password') {
+          print('The password provided is too weak.');
+          Navigator.pushNamed(context, '/registrationWeakPasswordPage');
+        } else if (e.code == 'email-already-in-use') {
+          print('The account already exists for that email.');
+          Navigator.pushNamed(context, '/registrationUserExists');
+        } else if (e.code == 'invalid-email') {
+          print('email is badly formatted');
+          Navigator.pushNamed(context, '/registrationBadFormat');
+        } else {
+          print(e);
+          Navigator.pushNamed(context, '/registrationUnknownError');
+        }
+    }
   }
 
   @override
