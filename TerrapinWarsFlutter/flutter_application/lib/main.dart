@@ -7,6 +7,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:location/location.dart';
 import 'package:firebase_database/firebase_database.dart';
 
+final List<int> _items = List<int>.generate(51, (int index) => index);
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
  await Firebase.initializeApp(
@@ -478,6 +480,7 @@ class _MapPageState extends State<MapPage> {
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
   }
+  double? scrolledUnderElevation;
 
   @override
   Widget build(BuildContext context) {
