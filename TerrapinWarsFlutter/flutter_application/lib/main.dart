@@ -481,16 +481,123 @@ class _MapPageState extends State<MapPage> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(
-        useMaterial3: true,
-        colorSchemeSeed: Colors.blue[200],
-      ),
-      home: Scaffold(
+    return Scaffold(
         appBar: AppBar(
-          title: const Text('Terrapin Wars'),
+          toolbarHeight: 100, 
+          title: const Center(
+            child: Text(
+              'Terrapin Wars',
+              style: TextStyle(fontSize: 50),
+            ),
+          ),
           elevation: 10,
-          backgroundColor: Color(0xCD5C5C),
+          backgroundColor: Colors.red[50],
+          foregroundColor: Colors.red,
+          actions: <Widget>[
+          IconButton(
+            icon: const Icon(Icons.scoreboard, color: Colors.red, size: 50.0,),
+            tooltip: 'Scoreboard',
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute<void>(
+                builder: (BuildContext context) {
+                  return Scaffold(
+                    appBar: AppBar(
+                      toolbarHeight: 100, 
+                      title: const Center(
+                        child: Text(
+                          'Scoreboard',
+                          style: TextStyle(fontSize: 50),
+                        ),
+                      ),
+                      scrolledUnderElevation: scrolledUnderElevation,
+                      backgroundColor: Colors.red[50],
+                      foregroundColor: Colors.red,
+                    ),
+                    body: GridView.builder(
+                      itemCount: _items.length,
+                      padding: const EdgeInsets.all(30.0),
+                      gridDelegate: const
+                      SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 1,
+                        childAspectRatio: 7.0,
+                        mainAxisSpacing: 20.0,
+                        crossAxisSpacing: 10.0,
+                      ),
+                      itemBuilder: (BuildContext context, int index) {
+                        return Container(
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20.0),
+                            color: Colors.amber,
+                          ),
+                          child: Text('Player $index', style: TextStyle(fontSize: 40),
+                          ),
+                        );
+                      },
+                      ),
+                      bottomNavigationBar: BottomAppBar(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8),
+                          child: OverflowBar(
+                            overflowAlignment: OverflowBarAlignment.center,
+                            alignment: MainAxisAlignment.center,
+                            overflowSpacing: 5.0
+                          )
+                        )
+                      )
+                    );
+                  },
+              ));
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.sensor_occupied, color: Colors.red, size: 50.0,),
+            tooltip: 'Profile',
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute<void>(
+                builder: (BuildContext context) {
+                  return Scaffold(
+                    appBar: AppBar(
+                      toolbarHeight: 100, 
+                      title: const Center(
+                        child: Text(
+                        'Profile',
+                        style: TextStyle(fontSize: 50),
+                        ),
+                      ),
+                      backgroundColor: Colors.red[50],
+                      foregroundColor: Colors.red,
+                    ),
+                    body: Column(
+                      children: <Widget>[
+                        Positioned.fill(
+                          child: Align(
+                          alignment: Alignment.center,
+                          child: Container(width: 300, height: 300, margin: EdgeInsets.all(20.0),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.amber,
+                            ),
+                          ),),
+                        ),
+                        Positioned.fill(
+                          child: Align(
+                          alignment: Alignment.center,
+                          child: Container(width: 700, margin: EdgeInsets.all(20.0),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.rectangle,
+                              color: Colors.amber,
+                            ),
+                          ),),
+                        ),
+                      ],
+                      ),
+                    );
+                },
+              ));
+            },
+          ),
+          ],
         ),
         body: GoogleMap(
           onMapCreated: _onMapCreated,
@@ -498,11 +605,18 @@ class _MapPageState extends State<MapPage> {
             target: _center,
             zoom: 15.5,
           ),
-          markers: _markers,
-          myLocationEnabled: true, // Enable current location button
+          markers: {
+            const Marker(
+            markerId: MarkerId('Default'),
+            position: LatLng(38.9869, -76.9426),
+            infoWindow: InfoWindow(
+               title: "Sydney",
+               snippet: "Capital of New South Wales",
+            ), // InfoWindow
+            )
+          },
         ),
-      ),
-    );
+      );
   }
 }
 
